@@ -31,7 +31,7 @@ class PasteAndSpamPlugin : Plugin() {
             val input = view.findViewById<EditText>(com.discord.R.id.chat_input_edit_text) ?: return@after
             val parent = input.parent as? ViewGroup ?: return@after
 
-            // Nút Dán
+            // Nút Dán (Paste)
             val pasteBtn = ImageButton(context).apply {
                 setImageResource(android.R.drawable.ic_menu_edit)
                 setBackgroundColor(android.graphics.Color.TRANSPARENT)
@@ -73,7 +73,7 @@ class PasteAndSpamPlugin : Plugin() {
             setPadding(40, 40, 40, 40)
         }
 
-        // Thanh kéo để di chuyển menu (giả lập)
+        // Thanh kéo di chuyển menu
         val dragBar = TextView(context).apply {
             text = "≡ Kéo để di chuyển ≡"
             gravity = Gravity.CENTER
@@ -87,22 +87,22 @@ class PasteAndSpamPlugin : Plugin() {
         }
         scrollView.addView(layout)
 
-        // 1. Delay
+        // Dòng 1: Delay
         val delayInput = EditText(context).apply {
             hint = "1. Delay (ms) - vd: 1000"
             inputType = android.text.InputType.TYPE_CLASS_NUMBER
         }
         layout.addView(delayInput)
 
-        // 2. Tag
+        // Dòng 2: Tag
         val tagLayout = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
         val tagCheck = CheckBox(context)
-        val tagInput = EditText(context).apply { hint = "ID/Tên cần tag" }
+        val tagInput = EditText(context).apply { hint = "2. ID/Tên cần tag" }
         tagLayout.addView(tagCheck)
         tagLayout.addView(tagInput)
         layout.addView(tagLayout)
 
-        // 2.5 Tùy chọn vị trí Tag
+        // Dòng 2.5: Tùy chọn vị trí Tag
         val tagPosGroup = RadioGroup(context).apply { orientation = RadioGroup.HORIZONTAL }
         val tagPosOptions = arrayOf("Đầu", "Giữa", "Cuối", "Random")
         for (i in tagPosOptions.indices) {
@@ -113,7 +113,7 @@ class PasteAndSpamPlugin : Plugin() {
         layout.addView(TextView(context).apply { text = "2.5 Vị trí Tag:" })
         layout.addView(tagPosGroup)
 
-        // 3. Vị trí gửi chữ
+        // Dòng 3: Vị trí gửi chữ
         val msgPosGroup = RadioGroup(context)
         val msgPosOptions = arrayOf("Đầu - Cuối", "Cuối - Đầu", "Random", "Full (CopyPaste)", "Cả 2 đầu", "Cả 3")
         for (i in msgPosOptions.indices) {
@@ -124,7 +124,7 @@ class PasteAndSpamPlugin : Plugin() {
         layout.addView(TextView(context).apply { text = "3. Vị trí gửi chữ:" })
         layout.addView(msgPosGroup)
 
-        // 5. Nguồn chữ (File hoặc Nhập tay)
+        // Dòng 5: Nguồn chữ (File hoặc Nhập tay)
         val msgSourceLayout = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
         val fileBtn = Button(context).apply { text = "Nhập file .txt" }
         val manualBtn = Button(context).apply { text = "Nhập tay" }
@@ -134,7 +134,7 @@ class PasteAndSpamPlugin : Plugin() {
         val msgList = mutableListOf<String>()
         fileBtn.setOnClickListener {
             msgList.clear()
-            msgList.addAll(listOf("Dòng 1", "Dòng 2", "Dòng 3")) // Giả lập đọc file
+            msgList.addAll(listOf("> # Nội dung 1", "> Nội dung 2", "# Nội dung 3")) // Giả lập file có sẵn prefix
             Toast.makeText(context, "Đã tải file (3 dòng)", Toast.LENGTH_SHORT).show()
         }
         manualBtn.setOnClickListener {
@@ -156,10 +156,10 @@ class PasteAndSpamPlugin : Plugin() {
         val loopCheck = CheckBox(context).apply { text = "Loop (Lặp lại khi hết)" }
         layout.addView(loopCheck)
 
-        // Prefix
-        val prefixBtn = Button(context).apply { text = "Nhập Prefix" }
+        // Prefix thủ công
+        val prefixBtn = Button(context).apply { text = "Nhập Prefix thủ công" }
         val prefixLayout = LinearLayout(context).apply { orientation = LinearLayout.HORIZONTAL }
-        val prefixCheck = CheckBox(context).apply { text = "Bật Prefix" }
+        val prefixCheck = CheckBox(context).apply { text = "Bật Prefix thủ công" }
         prefixLayout.addView(prefixBtn)
         prefixLayout.addView(prefixCheck)
         layout.addView(prefixLayout)
@@ -244,30 +244,47 @@ class PasteAndSpamPlugin : Plugin() {
                         0 -> "$msg\n"
                         1 -> "\n$msg"
                         2 -> if (Random.nextBoolean()) "$msg\n" else "\n$msg"
-                        3 -> msg // Full (Không xuống dòng)
+                        3 -> msg
                         4 -> "\n$msg\n"
                         5 -> "\n\n$msg\n\n"
                         else -> msg
                     }
 
-                    // Xử lý tag
+                    // Xử lý Tag & Tự động phát hiện Prefix trong câu
                     if (doTag && tagId.isNotEmpty()) {
-                        val prefixes = arrayOf("> #", ">", "#")
-                        val tagStr = prefixes[Random.nextInt(prefixes.size)] + tagId
-                        msg = when (tagPos) {
-                            0 -> "$tagStr\n$msg" // Đầu
-                            1 -> { // Giữa
-                                val lines = msg.split("\n")
-                                val mid = lines.size / 2
-                                lines.toMutableList().apply { add(mid, tagStr) }.joinToString("\n")
+                        val mentionId = if (tagId.startsWith("<@")) tagId else "<@$tagId>"
+                        val prefixesToCheck = arrayOf("> # ", "> ", "# ")
+                        var prefixFound = ""
+                        var contentWithoutPrefix = msg
+
+                        // Quét xem dòng hiện tại có bắt đầu bằng prefix nào không
+                        for (p in prefixesToCheck) {
+                            if (msg.startsWith(p)) {
+                                prefixFound = p
+                                contentWithoutPrefix = msg.substring(p.length)
+                                break
                             }
-                            2 -> "$msg\n$tagStr" // Cuối
-                            3 -> if (Random.nextBoolean()) "$tagStr\n$msg" else "$msg\n$tagStr"
-                            else -> msg
+                        }
+
+                        // Nếu có prefix, chèn tag ngay sau prefix. Nếu không, chèn tag theo vị trí (đầu/giữa/cuối)
+                        msg = if (prefixFound.isNotEmpty()) {
+                            "$prefixFound$mentionId $contentWithoutPrefix"
+                        } else {
+                            when (tagPos) {
+                                0 -> "$mentionId\n$msg"
+                                1 -> {
+                                    val lines = msg.split("\n")
+                                    val mid = lines.size / 2
+                                    lines.toMutableList().apply { add(mid, mentionId) }.joinToString("\n")
+                                }
+                                2 -> "$msg\n$mentionId"
+                                3 -> if (Random.nextBoolean()) "$mentionId\n$msg" else "$msg\n$mentionId"
+                                else -> msg
+                            }
                         }
                     }
 
-                    // Xử lý Prefix
+                    // Xử lý Prefix thủ công
                     if (doPrefix && customPrefix.isNotEmpty()) {
                         msg = "$customPrefix $msg"
                     }
@@ -293,7 +310,6 @@ class PasteAndSpamPlugin : Plugin() {
         dialog.setView(rootLayout)
         dialog.show()
         
-        // Cấu hình để dialog có thể di chuyển tự do
         dialog.window?.setLayout(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT
