@@ -12,6 +12,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven { url = uri("https://maven.aliucord.com/releases") }
+        maven { url = uri("https://maven.aliucord.com/snapshots") }
     }
 }
 rootProject.name = "PasteAndSpam"
