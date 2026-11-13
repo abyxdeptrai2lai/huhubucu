@@ -17,9 +17,10 @@ aliucord {
     author("Freddy")
     description("Paste button and Spam menu")
     version = "1.0.0"
+    deploy.set(true)
 }
 
 dependencies {
     compileOnly("com.discord:discord:126021")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.21")
 }
