@@ -19,10 +19,9 @@ import kotlin.random.Random
 
 @AliucordPlugin
 class PasteAndSpamPlugin : Plugin() {
-    private var isSpamming = false
+    @Volatile private var isSpamming = false
     private var spamThread: Thread? = null
     private var customPrefix = ""
-    private var usePrefix = false
 
     @SuppressLint("ClickableViewAccessibility")
     override fun start(context: Context) {
@@ -134,7 +133,7 @@ class PasteAndSpamPlugin : Plugin() {
         val msgList = mutableListOf<String>()
         fileBtn.setOnClickListener {
             msgList.clear()
-            msgList.addAll(listOf("> # Nội dung 1", "> Nội dung 2", "# Nội dung 3")) // Giả lập file có sẵn prefix
+            msgList.addAll(listOf("> # Nội dung 1", "> Nội dung 2", "# Nội dung 3")) // Mock data
             Toast.makeText(context, "Đã tải file (3 dòng)", Toast.LENGTH_SHORT).show()
         }
         manualBtn.setOnClickListener {
@@ -145,7 +144,7 @@ class PasteAndSpamPlugin : Plugin() {
             inputDialog.setView(editText)
             inputDialog.setPositiveButton("Lưu") { _, _ ->
                 msgList.clear()
-                msgList.addAll(editText.text.toString().split("\n"))
+                msgList.addAll(editText.text.toString().split("\n").filter { it.isNotBlank() })
             }
             inputDialog.show()
         }
@@ -257,7 +256,6 @@ class PasteAndSpamPlugin : Plugin() {
                         var prefixFound = ""
                         var contentWithoutPrefix = msg
 
-                        // Quét xem dòng hiện tại có bắt đầu bằng prefix nào không
                         for (p in prefixesToCheck) {
                             if (msg.startsWith(p)) {
                                 prefixFound = p
@@ -266,7 +264,6 @@ class PasteAndSpamPlugin : Plugin() {
                             }
                         }
 
-                        // Nếu có prefix, chèn tag ngay sau prefix. Nếu không, chèn tag theo vị trí (đầu/giữa/cuối)
                         msg = if (prefixFound.isNotEmpty()) {
                             "$prefixFound$mentionId $contentWithoutPrefix"
                         } else {
@@ -274,8 +271,12 @@ class PasteAndSpamPlugin : Plugin() {
                                 0 -> "$mentionId\n$msg"
                                 1 -> {
                                     val lines = msg.split("\n")
-                                    val mid = lines.size / 2
-                                    lines.toMutableList().apply { add(mid, mentionId) }.joinToString("\n")
+                                    if (lines.size > 1) {
+                                        val mid = lines.size / 2
+                                        lines.toMutableList().apply { add(mid, mentionId) }.joinToString("\n")
+                                    } else {
+                                        "$mentionId\n$msg"
+                                    }
                                 }
                                 2 -> "$msg\n$mentionId"
                                 3 -> if (Random.nextBoolean()) "$mentionId\n$msg" else "$msg\n$mentionId"
@@ -284,7 +285,6 @@ class PasteAndSpamPlugin : Plugin() {
                         }
                     }
 
-                    // Xử lý Prefix thủ công
                     if (doPrefix && customPrefix.isNotEmpty()) {
                         msg = "$customPrefix $msg"
                     }
