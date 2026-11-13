@@ -1,17 +1,17 @@
+@file:Suppress("UnstableApiUsage")
 pluginManagement {
     repositories {
         google()
         gradlePluginPortal()
-        mavenCentral()
-        maven("https://maven.aliucord.com/releases")
+        maven { url = uri("https://maven.aliucord.com/releases") }
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven("https://maven.aliucord.com/releases")
+        maven { url = uri("https://maven.aliucord.com/releases") }
     }
 }
 rootProject.name = "PasteAndSpam"
