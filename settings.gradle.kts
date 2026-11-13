@@ -2,11 +2,12 @@ pluginManagement {
     repositories {
         google()
         gradlePluginPortal()
+        mavenCentral()
         maven { url = uri("https://maven.aliucord.com/releases") }
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
