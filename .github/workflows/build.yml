@@ -9,10 +9,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Grant execute permission
-        run: chmod +x gradlew
+      - name: Setup Gradle 8.2
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.2'
       - name: Build with Gradle
-        run: ./gradlew plugin:make
+        run: gradle plugin:make
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
