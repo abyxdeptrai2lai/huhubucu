@@ -1,9 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.aliucord.gradle")
 }
-
-apply(plugin = "com.aliucord.gradle")
 
 android {
     namespace = "com.aliucord.plugins.pasteandspam"
