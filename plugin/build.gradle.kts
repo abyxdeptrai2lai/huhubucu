@@ -1,15 +1,27 @@
-version = "1.0.0"
-description = "Paste button and Spam menu"
+android {
+    namespace = "com.aliucord.plugins.pasteandspam"
+    compileSdk = 34
+    defaultConfig {
+        minSdk = 26
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    kotlinOptions {
+        jvmTarget = "21"
+    }
+}
 
 aliucord {
-    changelog.set("""
-        # 1.0.0
-        * Initial release!
-    """.trimIndent())
-    deploy.set(true) // Bật để tự động đẩy file zip lên nhánh builds
+    author("Freddy")
+    description = "Paste button and Spam menu"
+    version = "1.0.0"
+    deploy.set(true)
 }
 
 dependencies {
     compileOnly("com.discord:discord:126021")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.5.21") // Đúng phiên bản stdlib của Aliucord
+    compileOnly("com.aliucord:Aliucord:2.9.1") // BẮT BUỘC
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.5.21") // Đúng version của Aliucord
 }
