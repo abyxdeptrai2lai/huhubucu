@@ -1,8 +1,16 @@
 pluginManagement {
     repositories {
         google()
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
+        maven("https://jitpack.io")
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.aliucord.gradle") {
+                useModule("com.github.Aliucord:gradle:${requested.version}")
+            }
+        }
     }
 }
 dependencyResolutionManagement {
@@ -10,7 +18,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://maven.aliucord.com/releases") }
+        maven("https://jitpack.io")
     }
 }
 rootProject.name = "PasteAndSpam"
