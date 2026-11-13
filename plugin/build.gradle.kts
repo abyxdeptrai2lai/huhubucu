@@ -9,13 +9,12 @@ android {
     compileSdk = 34
     defaultConfig {
         minSdk = 26
-        targetSdk = 34
     }
 }
 
 aliucord {
     author("Freddy")
-    description("Paste button and Spam menu")
+    description = "Paste button and Spam menu"
     version = "1.0.0"
     deploy.set(true)
 }
