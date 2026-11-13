@@ -9,15 +9,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.5'
-          cache-disabled: true # Dòng này ép tắt cache
       - name: Grant execute permission
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew plugin:make --no-daemon --no-build-cache
+        run: ./gradlew plugin:make
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
