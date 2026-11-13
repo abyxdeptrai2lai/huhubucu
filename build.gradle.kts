@@ -1,5 +1,13 @@
 plugins {
     id("com.android.library") version "8.2.0" apply false
     id("org.jetbrains.kotlin.android") version "1.9.20" apply false
-    id("com.aliucord.gradle") version "1.0.0" apply false
+    id("com.aliucord.gradle") version "1.0.2" apply false
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven("https://maven.aliucord.com/releases")
+    }
 }
