@@ -5,16 +5,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-      - name: Grant execute permission for gradlew
+        with:
+          cache-disabled: true # Ép tắt cache của GitHub Actions
+          
+      - name: Grant execute permission
         run: chmod +x gradlew
+        
+      - name: Clean Gradle Cache
+        run: rm -rf ~/.gradle/caches/ # Xoá sạch cache trên máy chủ
+        
       - name: Build with Gradle
-        run: ./gradlew plugin:make
+        # --refresh-dependencies: Bắt tải lại toàn bộ thư viện
+        # --no-build-cache: Không dùng cache của Gradle
+        # --no-daemon: Không giữ tiến trình ngầm
+        run: ./gradlew plugin:make --no-daemon --no-build-cache --refresh-dependencies
+        
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
