@@ -1,6 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.aliucord.gradle")
 }
 
 android {
@@ -12,12 +13,12 @@ android {
     }
 }
 
-dependencies {
-    compileOnly("com.discord:discord:126021")
+aliucord {
+    author("Freddy")
+    description("Paste button and Spam menu")
+    version = "1.0.0"
 }
 
-tasks.register<Zip>("make") {
-    from("src/main")
-    archiveFileName.set("PasteAndSpam.zip")
-    destinationDirectory.set(layout.buildDirectory.dir("outputs"))
+dependencies {
+    compileOnly("com.discord:discord:126021")
 }
