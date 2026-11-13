@@ -1,7 +1,6 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.aliucord.gradle")
 }
 
 android {
@@ -11,12 +10,14 @@ android {
         minSdk = 26
         targetSdk = 34
     }
-}
-
-aliucord {
-    author("Freddy")
-    description("Paste button and Spam menu")
-    version = "1.0.0"
+    // Cấu hình để nó tự đóng gói file zip giống Aliucord
+    libraryVariants.all {
+        val variant = this
+        variant.outputs.all {
+            val output = this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+            output.outputFileName = "PasteAndSpam.zip"
+        }
+    }
 }
 
 dependencies {
