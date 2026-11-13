@@ -10,6 +10,15 @@ android {
     defaultConfig {
         minSdk = 26
     }
+    
+    // Đồng bộ Java và Kotlin cùng chung chuẩn 17
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 }
 
 aliucord {
@@ -21,5 +30,5 @@ aliucord {
 
 dependencies {
     compileOnly("com.discord:discord:126021")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.21")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
 }
