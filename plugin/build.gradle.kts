@@ -1,7 +1,7 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("com.aliucord.gradle")
+    id("com.aliucord.plugin")
 }
 
 android {
@@ -21,4 +21,5 @@ aliucord {
 
 dependencies {
     compileOnly("com.discord:discord:126021")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.3.0")
 }
