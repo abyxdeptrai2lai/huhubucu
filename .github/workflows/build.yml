@@ -12,9 +12,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Build with Gradle
-        run: |
-          chmod +x gradlew
-          ./gradlew plugin:make
+        run: gradle plugin:make
       - name: Upload Build
         uses: actions/upload-artifact@v4
         with:
