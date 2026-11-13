@@ -29,5 +29,5 @@ aliucord {
 
 dependencies {
     compileOnly("com.discord:discord:126021")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.20")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:2.0.21")
 }
